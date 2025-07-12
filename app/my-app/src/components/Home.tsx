@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Header from '../components/Header';
-import SearchBar from '../components/SearchBar';
-import QuestionCard from '../components/QuestionCard';
+import Header from './Header';
+import SearchBar from './SearchBar';
+import QuestionCard from './QuestionCard';
 import type { Question } from '../types/question';
 import './Home.css';
 

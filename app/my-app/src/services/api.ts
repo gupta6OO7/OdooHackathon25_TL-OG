@@ -115,14 +115,26 @@ export const authUtils = {
     localStorage.setItem('authToken', token);
   },
 
+  // Save user data to localStorage
+  saveUser: (user: User) => {
+    localStorage.setItem('userData', JSON.stringify(user));
+  },
+
   // Get token from localStorage
   getToken: (): string | null => {
     return localStorage.getItem('authToken');
   },
 
+  // Get user data from localStorage
+  getUser: (): User | null => {
+    const userData = localStorage.getItem('userData');
+    return userData ? JSON.parse(userData) : null;
+  },
+
   // Remove token from localStorage
   removeToken: () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('userData');
   },
 
   // Check if user is logged in
