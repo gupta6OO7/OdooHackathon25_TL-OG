@@ -8,11 +8,12 @@
   padding: 0;
 }
 
+
 .main-content {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px;
+  width: 100vw;
+  margin: 0;
+  padding: 20px 0;
+  box-sizing: border-box;
 }
 
 /* Search Section */
@@ -103,11 +104,14 @@
   box-shadow: 0 6px 25px rgba(24, 119, 242, 0.4);
 }
 
+
 .questions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 20px;
-  padding: 0 20px;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+  width: 100vw;
+  padding: 0 32px;
+  box-sizing: border-box;
 }
 
 /* Question Cards */
@@ -227,24 +231,28 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .questions-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    padding: 0 10px;
+  }
+}
+
 @media (max-width: 768px) {
   .search-section h1 {
     font-size: 2.2rem;
   }
-  
   .questions-grid {
     grid-template-columns: 1fr;
-    padding: 0 15px;
+    padding: 0 5px;
   }
-  
   .section-header {
     flex-direction: column;
     gap: 20px;
     align-items: stretch;
   }
-  
   .main-content {
-    padding: 10px;
+    padding: 5px 0;
   }
 }
 
