@@ -40,7 +40,7 @@ export class QuestionService {
     }
   }
 
-  async getQuestion(req: Request, res: Response) {
+  async getAllQuestion(req: Request, res: Response) {
     try {
       const allQuestions = await this.questionRepository.find();
       if (!allQuestions) {
@@ -49,6 +49,23 @@ export class QuestionService {
       return res.status(200).json(allQuestions);
     } catch (error) {
       logger.error("Error fetching questions:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  async getQuestion(req: Request, res: Response) {
+    try {
+      const questionId = req.params.questionId;
+      const question = await this.questionRepository.findOne({
+        where: { id: questionId },
+        relations: ["answers"]
+      });
+      if (!question) {
+        return res.status(404).json({ message: "Question not found" });
+      }
+      return res.status(200).json(question);
+    } catch (error) {
+      logger.error("Error fetching question:", error);
       return res.status(500).json({ message: "Internal server error" });
     }
   }

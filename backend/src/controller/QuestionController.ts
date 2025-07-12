@@ -20,6 +20,17 @@ export class QuestionController {
   };
 
 
+  getAllQuestionController = async (req: Request, res: Response) => {
+    try {
+      await this.questionService.getAllQuestion(req, res);
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  };
+
   getQuestionController = async (req: Request, res: Response) => {
     try {
       await this.questionService.getQuestion(req, res);
