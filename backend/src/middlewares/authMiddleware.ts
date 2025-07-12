@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/AuthService";
+import logger from "../helpers/logger";
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -114,7 +115,7 @@ export class AuthMiddleware {
         };
       } catch (error) {
         // Token is invalid, but continue without authentication
-        console.log("Optional auth failed:", error);
+        logger.info("Optional auth failed:", error);
       }
 
       next();

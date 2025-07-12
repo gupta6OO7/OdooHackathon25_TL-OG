@@ -7,6 +7,7 @@ import path from "path";
 import { AppDataSource } from "./datasource";
 import { errorHandler } from "./middlewares/errorHandler";
 import { requestLogger } from "./middlewares/requestLogger";
+import logger from "./helpers/logger";
 import apiRoutes from "./api";
 
 // Load environment variables
@@ -57,14 +58,14 @@ const startServer = async () => {
   try {
     // Initialize database connection for authentication
     await AppDataSource.initialize();
-    console.log("✅ Database connected successfully");
+    logger.info("✅ Database connected successfully");
     
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-      console.log(`📊 Health check: http://localhost:${PORT}/health`);
-      console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
-      console.log(`🧪 Dummy API: http://localhost:${PORT}/api/dummy`);
-      console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
+      logger.info(`🚀 Server running on http://localhost:${PORT}`);
+      logger.info(`📊 Health check: http://localhost:${PORT}/health`);
+      logger.info(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
+      logger.info(`🧪 Dummy API: http://localhost:${PORT}/api/dummy`);
+      logger.info(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
     });
   } catch (error) {
     console.error("❌ Error starting server:", error);
