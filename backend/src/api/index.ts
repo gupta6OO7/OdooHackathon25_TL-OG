@@ -2,6 +2,7 @@ import { Router } from "express";
 import authRoutes from "./auth";
 import exampleRoutes from "./examples";
 import imageRoutes from "./images";
+import questionRoutes from "./question";
 
 const router = Router();
 
@@ -53,5 +54,8 @@ router.use("/images", imageRoutes);
 
 // Example routes demonstrating authentication middleware usage
 router.use("/examples", exampleRoutes);
+
+// Question routes
+router.use("/questions", questionRoutes);
 
 export default router;
