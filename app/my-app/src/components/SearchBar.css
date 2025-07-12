@@ -1,0 +1,49 @@
+.search-bar {
+    margin: 20px 0;
+  }
+  
+  .search-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .search-form input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .search-form button {
+    padding: 8px 16px;
+    border: none;
+    background-color: #0074cc;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .search-form button:hover {
+    background-color: #005fa3;
+  }
+  
+  .tag-filter {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .tag-button {
+    background: #2f2b2b;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  
+  .tag-button:hover {
+    background: #ccc;
+  }
+  

@@ -1,0 +1,9 @@
+.home-container {
+    max-width: 800px;         /* Limit width */
+    margin: 40px auto;        /* Center horizontally */
+    padding: 0 16px;          /* Padding for small screens */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;                /* Space between cards */
+  }
+  
