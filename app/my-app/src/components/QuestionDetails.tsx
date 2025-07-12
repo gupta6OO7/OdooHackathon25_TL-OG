@@ -278,7 +278,7 @@ const QuestionDetails: React.FC = () => {
               });
               setAnswerContent('');
               // Refresh question/answers
-              const res = await api.get(`/questions/answers?questionId=${question.id}`);
+              const res = await api.get(`/questions/${question.id}`);
               setQuestion(res.data);
             } catch (err: any) {
               setPostError('Failed to post answer.');
