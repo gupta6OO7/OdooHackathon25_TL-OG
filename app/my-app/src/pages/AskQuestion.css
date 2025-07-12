@@ -1,0 +1,63 @@
+.ask-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+  
+  .ask-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .ask-form label {
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 6px;
+  }
+  
+  .ask-form input,
+  .ask-form textarea {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 100%;
+  }
+  
+  .tag-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  
+  .tag {
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #eee;
+    cursor: pointer;
+  }
+  
+  .tag.selected {
+    background-color: #0074cc;
+    color: white;
+    border-color: #005fa3;
+  }
+  
+  .submit-btn {
+    margin-top: 30px;
+    padding: 10px 20px;
+    background-color: #0074cc;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .submit-btn:hover {
+    background-color: #005fa3;
+  }
+  

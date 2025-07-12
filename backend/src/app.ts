@@ -68,7 +68,7 @@ const startServer = async () => {
       logger.info(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
     });
   } catch (error) {
-    console.error("❌ Error starting server:", error);
+    logger.error("❌ Error starting server:", error);
     process.exit(1);
   }
 };

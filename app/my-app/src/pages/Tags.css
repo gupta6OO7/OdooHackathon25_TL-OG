@@ -1,0 +1,45 @@
+.tags-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+  
+  h1 {
+    font-size: 26px;
+    margin-bottom: 24px;
+  }
+  
+  .tags-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+  
+  .tag-card {
+    display: block;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    text-decoration: none;
+    color: #333;
+    transition: box-shadow 0.2s;
+  }
+  
+  .tag-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background-color: #f0faff;
+  }
+  
+  .tag-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #0074cc;
+  }
+  
+  .tag-count {
+    font-size: 13px;
+    color: #777;
+    margin-top: 4px;
+  }
+  
