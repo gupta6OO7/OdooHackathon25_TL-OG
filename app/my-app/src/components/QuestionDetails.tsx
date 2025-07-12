@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import RichTextEditor from './RichTextEditor';
 import './QuestionDetails.css';
 
 const mockQuestion = {
@@ -40,10 +41,12 @@ const mockAnswers = [
 
 const QuestionDetails: React.FC = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   // In real app, fetch question/answers by id
   const question = mockQuestion; // would filter by id
   const [answers, setAnswers] = useState(mockAnswers);
   const [commentInputs, setCommentInputs] = useState<{ [answerId: string]: string }>({});
+  const [answerContent, setAnswerContent] = useState('');
 
   const handleCommentChange = (answerId: string, value: string) => {
     setCommentInputs((prev) => ({ ...prev, [answerId]: value }));
@@ -73,6 +76,14 @@ const QuestionDetails: React.FC = () => {
 
   return (
     <div className="question-details-container">
+      <div className="question-back" onClick={() => navigate('/')}
+        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: 24 }}
+      >
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15.5 19L8.5 12L15.5 5" stroke="#667eea" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <span style={{ color: '#e2e8f0', fontWeight: 600, fontSize: '1.1rem', marginLeft: 8 }}>Home</span>
+      </div>
       <h1 className="question-title">{question.title}</h1>
       <div className="question-meta">
         Posted by {question.author} • {new Date(question.createdAt).toLocaleString()}
@@ -104,19 +115,19 @@ const QuestionDetails: React.FC = () => {
               ))}
             </div>
             <div className="add-comment-row">
-              <input
-                type="text"
-                className="comment-input"
+              <RichTextEditor
                 placeholder="Add a comment..."
                 value={commentInputs[ans.id] || ''}
-                onChange={e => handleCommentChange(ans.id, e.target.value)}
+                onChange={(value) => handleCommentChange(ans.id, value)}
+                className="compact"
               />
               <button
                 className="add-comment-btn"
                 onClick={() => handleAddComment(ans.id)}
                 disabled={!(commentInputs[ans.id] && commentInputs[ans.id].trim())}
+                style={{ marginTop: '8px', alignSelf: 'flex-start' }}
               >
-                Add
+                Add Comment
               </button>
             </div>
           </div>
@@ -124,9 +135,16 @@ const QuestionDetails: React.FC = () => {
       ))}
 
       <h3>Write your answer</h3>
-      <textarea className="answer-textarea" placeholder="Write your answer here..." disabled />
+      <RichTextEditor
+        placeholder="Write a detailed answer to help the community..."
+        value={answerContent}
+        onChange={setAnswerContent}
+        disabled={true}
+      />
 
-      <button className="submit-btn" disabled>Login to answer</button>
+      <button className="submit-btn" disabled style={{ marginTop: '12px' }}>
+        Login to answer
+      </button>
     </div>
   );
 };
