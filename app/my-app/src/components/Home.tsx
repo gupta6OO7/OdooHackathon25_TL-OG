@@ -17,25 +17,27 @@ const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void; onLogin: () =
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>🔒 Login Required</h3>
-          <button className="close-btn" onClick={onClose}>
-            ×
-          </button>
+          <button className="close-btn" onClick={onClose}>×</button>
         </div>
         <div className="modal-body">
           <p>You need to be logged in to perform this action.</p>
           <p>Join our community to ask questions, share knowledge, and help others!</p>
         </div>
         <div className="modal-actions">
-          <button className="login-btn" onClick={onLogin}>
-            Login
-          </button>
-          <button className="signup-btn" onClick={onSignup}>
-            Sign Up
-          </button>
+          <button className="login-btn" onClick={onLogin}>Login</button>
+          <button className="signup-btn" onClick={onSignup}>Sign Up</button>
         </div>
       </div>
     </div>
   );
+};
+
+// You will implement the logic to detect admin
+const isAdmin = (): boolean => {
+  const user = authUtils.getUser();
+  if (user && user.role === 'ADMIN') 
+    return true;
+  return false;
 };
 
 const Home: React.FC = () => {
@@ -105,16 +107,60 @@ const Home: React.FC = () => {
     navigate('/signup');
   };
 
-  // const formatTimeAgo = (dateString: string) => {
-  //   const date = new Date(dateString);
-  //   const now = new Date();
-  //   const diffTime = Math.abs(now.getTime() - date.getTime());
-  //   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  //   if (diffDays === 1) return '1 day ago';
-  //   if (diffDays < 7) return `${diffDays} days ago`;
-  //   if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
-  //   return `${Math.ceil(diffDays / 30)} months ago`;
-  // };
+  const handleUpvote = async (id: string) => {
+    if (!isLoggedIn) return setShowLoginModal(true);
+    try {
+      const res = await fetch(`http://localhost:3001/api/questions/${id}/upvote`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${authUtils.getToken()}` },
+      });
+      if (!res.ok) throw new Error('Failed to upvote');
+      setQuestions((prev) =>
+        prev.map((q) => (q.id === id ? { ...q, voteCount: q.voteCount + 1 } : q))
+      );
+      setFilteredQuestions((prev) =>
+        prev.map((q) => (q.id === id ? { ...q, voteCount: q.voteCount + 1 } : q))
+      );
+    } catch (err) {
+      console.error('Upvote failed:', err);
+    }
+  };
+
+  const handleDownvote = async (id: string) => {
+    if (!isLoggedIn) return setShowLoginModal(true);
+    try {
+      const res = await fetch(`http://localhost:3001/api/questions/${id}/upvote`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${authUtils.getToken()}` },
+      });
+      if (!res.ok) throw new Error('Failed to upvote');
+      setQuestions((prev) =>
+        prev.map((q) => (q.id === id ? { ...q, voteCount: q.voteCount + 1 } : q))
+      );
+      setFilteredQuestions((prev) =>
+        prev.map((q) => (q.id === id ? { ...q, voteCount: q.voteCount + 1 } : q))
+      );
+    } catch (err) {
+      console.error('Upvote failed:', err);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const confirmed = window.confirm('Are you sure you want to delete this question?');
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch(`http://localhost:3001/api/questions/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${authUtils.getToken()}` },
+      });
+      if (!res.ok) throw new Error('Failed to delete');
+      setQuestions((prev) => prev.filter((q) => q.id !== id));
+      setFilteredQuestions((prev) => prev.filter((q) => q.id !== id));
+    } catch (err) {
+      console.error('Delete failed:', err);
+    }
+  };
 
   if (loading) return <div className="home-container"><p>Loading questions...</p></div>;
 
@@ -147,17 +193,16 @@ const Home: React.FC = () => {
 
             <div className="questions-grid">
               {filteredQuestions.map((question) => (
-                <div
-                  key={question.id}
-                  className="question-card"
-                  onClick={() => navigate(`/question/${question.id}`)}
-                >
-                  <h3 className="question-title">{question.title}</h3>
+                <div key={question.id} className="question-card">
+                  <h3
+                    className="question-title"
+                    onClick={() => navigate(`/question/${question.id}`)}
+                  >
+                    {question.title}
+                  </h3>
                   <div className="question-tags">
                     {question.tags.map((tag) => (
-                      <span key={tag} className="tag">
-                        #{tag}
-                      </span>
+                      <span key={tag} className="tag">#{tag}</span>
                     ))}
                   </div>
                   <div className="question-meta">
@@ -171,9 +216,20 @@ const Home: React.FC = () => {
                         <span>answers</span>
                       </div>
                     </div>
-                    <div className="question-author">
-                      by {question.author} • 2 hours ago
-                    </div>
+                    <div className="question-author">by {question.author} • 2 hours ago</div>
+                  </div>
+                  <div className="question-actions">
+                    <button onClick={() => handleUpvote(question.id)} >
+                      👍 Upvote
+                    </button>
+                    <button onClick={() => handleDownvote(question.id)} className="spaced-btn">
+                    👎 Downvote
+                    </button>
+                    {isAdmin() && (
+                      <button onClick={() => handleDelete(question.id)} className="spaced-btn delete-btn">
+                        🗑️
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

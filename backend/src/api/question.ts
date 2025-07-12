@@ -7,7 +7,9 @@ const questionController = new QuestionController();
 
 //  TODO: add authorization
 router.post("/", questionController.createQuestionController);
-router.get("/", questionController.getQuestionController);
+router.get("/", questionController.getAllQuestionController);
+router.get("/:questionId", questionController.getQuestionController);
+router.delete("/:questionId", authMiddleware, questionController.deleteQuestionController);
 router.get("/answers", questionController.getQuestionAnswersController);
 
 export default router;

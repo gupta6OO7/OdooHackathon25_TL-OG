@@ -22,8 +22,9 @@ export class AnswerService {
       const { title, description, userId, questionId } = req.body;
 
       const user = await this.userRepository.findOneBy({ id: userId });
-      const question = await this.questionRepository.findOneBy({
-        id: questionId,
+      const question = await this.questionRepository.findOne({
+        where: { id: questionId },
+        relations: ["user"],
       });
 
       if (!user) {
@@ -40,8 +41,20 @@ export class AnswerService {
         user,
       });
 
+      const questionUser = await this.userRepository.findOneBy({
+        id: question.user.id,
+      });
+      if (!questionUser) {
+        return res.status(404).json("Question doesn't exist");
+      }
+      if (!questionUser.notifications) {
+        questionUser.notifications = {"unread":[], "read":[]};
+      }
+      questionUser.notifications["unread"].push(
+        "Someone has answered to your question!"
+      );
+      await this.userRepository.save(questionUser);
       const savedAnswer = await this.answerRepository.save(answer);
-
       return res.status(200).json(savedAnswer);
     } catch (error) {
       logger.error("Error creating answer:", error);
@@ -94,7 +107,9 @@ export class AnswerService {
       user.votes = userVotes;
       await this.userRepository.save(user);
       await this.answerRepository.save(answer);
-      return res.status(200).json({ message: "Successfully updated the answer" });
+      return res
+        .status(200)
+        .json({ message: "Successfully updated the answer" });
     } catch (error) {
       logger.error("Error creating answers:", error);
       return res.status(500).json({ message: "Internal server error" });
