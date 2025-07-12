@@ -6,6 +6,7 @@ const answerController = new AnswerController();
 
 //  TODO: add authorization
 router.post("/", answerController.createAnswerController);
+router.put("/", answerController.updateAnswerController);
 router.get("/", answerController.getAnswerController)
 
 export default router;

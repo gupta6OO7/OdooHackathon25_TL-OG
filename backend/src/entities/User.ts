@@ -52,6 +52,9 @@ export class User {
   @Column("json", { nullable: true })
   notifications: { title: string; description: string }[];
 
+  @Column("json", { nullable: true })
+  votes:  Record<string, number>;
+
   @CreateDateColumn()
   createdAt: Date;
 
