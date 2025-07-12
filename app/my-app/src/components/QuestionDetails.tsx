@@ -68,7 +68,7 @@ const QuestionDetails: React.FC = () => {
       setLoading(true);
       setError('');
       try {
-        const res = await api.get(`/questions/answers?questionId=${id}`);
+        const res = await api.get(`/questions/${id}`);
         const q = res.data;
         // Fetch userName for question author
         if (q.userId) fetchUserName(q.userId);
@@ -149,14 +149,21 @@ const QuestionDetails: React.FC = () => {
                 try {
                   await answersAPI.voteAnswer({
                     answerId: ans.id,
-                    title: ans.title || '',
-                    description: ans.description || ans.content || '',
-                    userId: authUtils.getUser()?.id,
+                    title: (ans as any)?.title || '',
+                    description: ans?.description || ans?.content || '',
+                    userId: authUtils.getUser()?.id || '',
                     vote: 1
                   });
-                  // Refresh question/answers
-                  const res = await api.get(`/questions/answers?questionId=${question.id}`);
-                  setQuestion(res.data);
+                  // Update local state for votes
+                  setQuestion(prevQ => {
+                    if (!prevQ) return prevQ;
+                    const updatedAnswers = prevQ.answers.map(a =>
+                      a.id === ans.id
+                        ? { ...a, votes: (typeof a.votes === 'number' ? a.votes : (a.voteCount ?? 0)) + 1, voteCount: (typeof a.votes === 'number' ? a.votes : (a.voteCount ?? 0)) + 1 }
+                        : a
+                    );
+                    return { ...prevQ, answers: updatedAnswers };
+                  });
                 } catch {}
               }}
             >
@@ -181,14 +188,21 @@ const QuestionDetails: React.FC = () => {
                 try {
                   await answersAPI.voteAnswer({
                     answerId: ans.id,
-                    title: ans.title || '',
-                    description: ans.description || ans.content || '',
-                    userId: authUtils.getUser()?.id,
+                    title: (ans as any)?.title || '',
+                    description: ans?.description || ans?.content || '',
+                    userId: authUtils.getUser()?.id || '',
                     vote: -1
                   });
-                  // Refresh question/answers
-                  const res = await api.get(`/questions/answers?questionId=${question.id}`);
-                  setQuestion(res.data);
+                  // Update local state for votes
+                  setQuestion(prevQ => {
+                    if (!prevQ) return prevQ;
+                    const updatedAnswers = prevQ.answers.map(a =>
+                      a.id === ans.id
+                        ? { ...a, votes: (typeof a.votes === 'number' ? a.votes : (a.voteCount ?? 0)) - 1, voteCount: (typeof a.votes === 'number' ? a.votes : (a.voteCount ?? 0)) - 1 }
+                        : a
+                    );
+                    return { ...prevQ, answers: updatedAnswers };
+                  });
                 } catch {}
               }}
             >
@@ -216,12 +230,9 @@ const QuestionDetails: React.FC = () => {
                 <div style={{ width: '100%' }}>
                   <RichTextEditor
                     placeholder="Add a comment..."
-                    value={commentInputs[ans.id] || ''}
-                    onChange={(value) => handleCommentChange(ans.id, value)}
+                    value={commentInputs[ans?.id] || ''}
+                    onChange={(value) => handleCommentChange(ans?.id, value)}
                     className="compact"
-                    style={{ minHeight: 32, maxHeight: 60, overflowY: 'auto', transition: 'max-height 0.2s', width: '100%' }}
-                    onFocus={e => e.currentTarget.style.maxHeight = '120px'}
-                    onBlur={e => e.currentTarget.style.maxHeight = '60px'}
                   />
                 </div>
                 <button
