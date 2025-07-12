@@ -64,7 +64,6 @@ const startServer = async () => {
       logger.info(`🚀 Server running on http://localhost:${PORT}`);
       logger.info(`📊 Health check: http://localhost:${PORT}/health`);
       logger.info(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
-      logger.info(`🧪 Dummy API: http://localhost:${PORT}/api/dummy`);
       logger.info(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
     });
   } catch (error) {
