@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AskQuestion.css';
+import { authUtils } from '../services/api';
 
 const tags = ['react', 'typescript', 'jwt', 'hooks', 'auth'];
 
@@ -10,38 +11,65 @@ const AskQuestion: React.FC = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const navigate = useNavigate();
 
+  const user = authUtils.getUser();
+  const isLoggedIn = authUtils.isLoggedIn();
+
   const toggleTag = (tag: string) => {
-    if (selectedTags.includes(tag)) {
-      setSelectedTags(selectedTags.filter(t => t !== tag));
-    } else {
-      setSelectedTags([...selectedTags, tag]);
-    }
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({
-      title,
-      description,
-      tags: selectedTags,
-    });
-    alert('Question submitted! (check console)');
-    // Reset form
-    setTitle('');
-    setDescription('');
-    setSelectedTags([]);
+
+    if (!isLoggedIn || !user?.id) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const payload = {
+        title,
+        description,
+        tags: selectedTags,
+        userId: user.id,
+      };
+
+      const res = await fetch('http://localhost:3001/api/questions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${token}` // if you implement JWT
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Failed to submit question');
+      }
+
+      alert('Question submitted successfully!');
+      navigate('/');
+    } catch (err: any) {
+      alert(err.message || 'Error submitting question');
+    }
   };
 
   return (
     <div className="ask-container">
-      <div className="ask-back" onClick={() => navigate('/')}
+      <div
+        className="ask-back"
+        onClick={() => navigate('/')}
         style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: 24 }}
       >
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M15.5 19L8.5 12L15.5 5" stroke="#667eea" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <path d="M15.5 19L8.5 12L15.5 5" stroke="#667eea" strokeWidth="2.5" strokeLinecap="round" />
         </svg>
-        <span style={{ color: '#e2e8f0', fontWeight: 600, fontSize: '1.1rem', marginLeft: 8 }}>Home</span>
+        <span style={{ marginLeft: 8, color: '#e2e8f0', fontWeight: 600 }}>Home</span>
       </div>
+
       <h1>Ask a Question</h1>
       <form onSubmit={handleSubmit} className="ask-form">
         <label>Title</label>
