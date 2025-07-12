@@ -3,15 +3,15 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import Profile from './components/Profile';
-import Home from './pages/Home';
+import Home from './components/Home';
+import QuestionDetails from './components/QuestionDetails';
+import AskQuestion from './components/AskQuestion';
+import Notifications from './components/Notifications';
+import Tags from './components/Tags';
+import Admin from './components/Admin';
 import { authUtils } from './services/api';
 import { RedirectService } from './services/redirectService';
 import './App.css';
-import QuestionDetails from './pages/QuestionDetails';
-import AskQuestion from './pages/AskQuestion';
-import Notifications from './pages/Notifications';
-import Tags from './pages/Tags';
-import Admin from './pages/Admin';
 
 function App() {
   return (
