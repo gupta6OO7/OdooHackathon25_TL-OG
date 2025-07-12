@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
+import path from "path";
 import { AppDataSource } from "./datasource";
 import { errorHandler } from "./middlewares/errorHandler";
 import { requestLogger } from "./middlewares/requestLogger";
@@ -22,6 +23,10 @@ app.use(cors({
 }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
+
+// Serve uploaded files statically
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
 app.use(requestLogger);
 
 // Health check endpoint
@@ -50,13 +55,14 @@ app.use(errorHandler);
 // Initialize database and start server
 const startServer = async () => {
   try {
-    // Skip database initialization for dummy API testing
-    // await AppDataSource.initialize();
-    console.log("⚠️  Database connection skipped for dummy API testing");
+    // Initialize database connection for authentication
+    await AppDataSource.initialize();
+    console.log("✅ Database connected successfully");
     
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
+      console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
       console.log(`🧪 Dummy API: http://localhost:${PORT}/api/dummy`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
     });
