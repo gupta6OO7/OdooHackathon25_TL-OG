@@ -1,43 +1,39 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from "typeorm";
+import { Question } from "./Question";
+import { Answer } from "./Answer";
+import { Image } from "./Image";
 
-@Entity("users")
+@Entity()
 export class User {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
-  @IsNotEmpty({ message: "Name is required" })
-  name: string;
-
-  @Column({ unique: true })
-  @IsNotEmpty({ message: "Username is required" })
-  userName: string;
-
-  @Column({ unique: true })
-  @IsEmail({}, { message: "Please provide a valid email" })
-  email: string;
-
-  @Column()
-  @MinLength(6, { message: "Password must be at least 6 characters long" })
-  password: string;
-
-  @Column({ nullable: true })
-  profilePhoto?: string;
-
-  @Column({ 
-    type: "enum", 
-    enum: ["admin", "user", "moderator"], 
-    default: "user" 
-  })
   role: string;
 
-  @Column({ default: true })
-  isActive: boolean;
+  @Column()
+  name: string;
+  
+  @Column()
+  email: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column("json", { nullable: true })
+  notifications: { title: string; description: string }[];
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @OneToMany(() => Question, (question) => question.user)
+  questions: Question[];
+
+  @OneToMany(() => Answer, (answer) => answer.user)
+  answers: Answer[];
+
+  @OneToOne(() => Image, (image) => image.user)
+  @JoinColumn()
+  image: Image;
 }
