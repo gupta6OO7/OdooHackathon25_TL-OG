@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import logger from "../helpers/logger";
 
 export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
   const timestamp = new Date().toISOString();
@@ -6,7 +7,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
   const url = req.url;
   const userAgent = req.get("User-Agent") || "";
   
-  console.log(`[${timestamp}] ${method} ${url} - ${userAgent}`);
+  logger.info(`[${timestamp}] ${method} ${url} - ${userAgent}`);
   
   next();
 };
