@@ -4,11 +4,13 @@ import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import { authUtils } from './services/api';
 import './App.css';
+import Home from './pages/Home';
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/feed" element={<Home />} />
         <Route path="/login" element={<LoginWrapper />} />
         <Route path="/signup" element={<SignupWrapper />} />
         <Route path="/dashboard" element={<ProtectedRoute><DashboardWrapper /></ProtectedRoute>} />
