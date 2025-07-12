@@ -1,35 +1,85 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import Login from './components/Login';
+import Signup from './components/Signup';
+import Dashboard from './components/Dashboard';
+import { authUtils } from './services/api';
+import './App.css';
+
+type AuthView = 'login' | 'signup' | 'dashboard';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [currentView, setCurrentView] = useState<AuthView>('login');
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  useEffect(() => {
+    // Check if user is already logged in
+    const checkAuthStatus = () => {
+      if (authUtils.isLoggedIn()) {
+        setCurrentView('dashboard');
+      }
+      setIsInitializing(false);
+    };
+
+    checkAuthStatus();
+  }, []);
+
+  const handleLoginSuccess = () => {
+    setCurrentView('dashboard');
+  };
+
+  const handleSignupSuccess = () => {
+    setCurrentView('dashboard');
+  };
+
+  const handleLogout = () => {
+    setCurrentView('login');
+  };
+
+  const switchToSignup = () => {
+    setCurrentView('signup');
+  };
+
+  const switchToLogin = () => {
+    setCurrentView('login');
+  };
+
+  if (isInitializing) {
+    return (
+      <div style={{ 
+        height: '100vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="App">
+      {currentView === 'login' && (
+        <Login 
+          onLoginSuccess={handleLoginSuccess}
+          onSwitchToSignup={switchToSignup}
+        />
+      )}
+      
+      {currentView === 'signup' && (
+        <Signup 
+          onSignupSuccess={handleSignupSuccess}
+          onSwitchToLogin={switchToLogin}
+        />
+      )}
+      
+      {currentView === 'dashboard' && (
+        <Dashboard onLogout={handleLogout} />
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
