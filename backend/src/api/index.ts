@@ -1,12 +1,10 @@
 import { Router } from "express";
-import { DummyController } from "../controller/DummyController";
 import authRoutes from "./auth";
 import exampleRoutes from "./examples";
 import imageRoutes from "./images";
 
 const router = Router();
 
-// Health check for API
 router.get("/health", (req, res) => {
   res.json({
     success: true,
@@ -55,11 +53,5 @@ router.use("/images", imageRoutes);
 
 // Example routes demonstrating authentication middleware usage
 router.use("/examples", exampleRoutes);
-
-// Dummy API routes
-router.get("/dummy", DummyController.getDummyData);
-router.post("/dummy", DummyController.createDummyData);
-router.put("/dummy/:id", DummyController.updateDummyData);
-router.delete("/dummy/:id", DummyController.deleteDummyData);
 
 export default router;
