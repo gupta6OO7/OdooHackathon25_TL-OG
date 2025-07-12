@@ -50,7 +50,7 @@ export class User {
   isActive: boolean;
 
   @Column("json", { nullable: true })
-  notifications: { title: string; description: string }[];
+  notifications: { unread: string[]; read: string[] };
 
   @Column("json", { nullable: true })
   votes:  Record<string, number>;
