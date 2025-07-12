@@ -21,7 +21,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/ask" element={<AskQuestion />} />
-        <Route path="/questionDetails" element={<QuestionDetails />} />
+        <Route path="/question/:id" element={<QuestionDetails />} />
         <Route path="/" element={<HomeWrapper/>} />
         <Route path="/login" element={<LoginWrapper />} />
         <Route path="/signup" element={<SignupWrapper />} />
