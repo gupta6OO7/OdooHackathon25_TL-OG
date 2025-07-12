@@ -7,11 +7,13 @@ import './App.css';
 import Home from './pages/Home';
 import QuestionDetails from './pages/QuestionDetails';
 import AskQuestion from './pages/AskQuestion';
+import Notifications from './pages/Notifications';
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/notifications" element={<Notifications />} />
         <Route path="/ask" element={<AskQuestion />} />
         <Route path="/questionDetails" element={<QuestionDetails />} />
         <Route path="/feed" element={<Home />} />
