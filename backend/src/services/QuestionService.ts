@@ -3,6 +3,7 @@ import { Repository } from "typeorm";
 import { Request, Response } from "express";
 import { Question } from "../entities/Question";
 import { User } from "../entities/User";
+import logger from "../helpers/logger";
 
 export class QuestionService {
   private questionRepository: Repository<Question>;
@@ -34,7 +35,7 @@ export class QuestionService {
 
     return res.status(200).json(savedQuestion);
   } catch (error) {
-    console.error("Error creating question:", error);
+    logger.error("Error creating question:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 }

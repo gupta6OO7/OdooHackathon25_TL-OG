@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AuthService } from "../services/AuthService";
 import { UserRole } from "../entities/User";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import logger from "../helpers/logger";
 
 export class AuthController {
   private authService: AuthService;
@@ -65,7 +66,7 @@ export class AuthController {
 
       return res.status(201).json(result);
     } catch (error) {
-      console.error("Signup controller error:", error);
+      logger.error("Signup controller error:", error);
       
       return res.status(500).json({
         success: false,
@@ -96,7 +97,7 @@ export class AuthController {
 
       return res.status(200).json(result);
     } catch (error) {
-      console.error("Login controller error:", error);
+      logger.error("Login controller error:", error);
       return res.status(500).json({
         success: false,
         message: "Internal server error during login"
@@ -140,7 +141,7 @@ export class AuthController {
         }
       });
     } catch (error) {
-      console.error("Get profile controller error:", error);
+      logger.error("Get profile controller error:", error);
       return res.status(500).json({
         success: false,
         message: "Internal server error while fetching profile"
@@ -166,7 +167,7 @@ export class AuthController {
         }
       });
     } catch (error) {
-      console.error("Verify token controller error:", error);
+      logger.error("Verify token controller error:", error);
       return res.status(500).json({
         success: false,
         message: "Internal server error while verifying token"
@@ -185,7 +186,7 @@ export class AuthController {
         message: "Logout successful"
       });
     } catch (error) {
-      console.error("Logout controller error:", error);
+      logger.error("Logout controller error:", error);
       return res.status(500).json({
         success: false,
         message: "Internal server error during logout"

@@ -4,6 +4,7 @@ import { AppDataSource } from "../datasource";
 import { User, UserRole } from "../entities/User";
 import { Image } from "../entities/Image";
 import { Repository } from "typeorm";
+import logger from "../helpers/logger";
 
 export interface LoginRequest {
   email: string;
@@ -113,7 +114,7 @@ export class AuthService {
         }
       };
     } catch (error) {
-      console.error("Signup error:", error);
+      logger.error("Signup error:", error);
       return {
         success: false,
         message: "Internal server error during signup"
@@ -173,7 +174,7 @@ export class AuthService {
         }
       };
     } catch (error) {
-      console.error("Login error:", error);
+      logger.error("Login error:", error);
       return {
         success: false,
         message: "Internal server error during login"
@@ -214,7 +215,7 @@ export class AuthService {
       });
       return user;
     } catch (error) {
-      console.error("Get user by ID error:", error);
+      logger.error("Get user by ID error:", error);
       return null;
     }
   }
