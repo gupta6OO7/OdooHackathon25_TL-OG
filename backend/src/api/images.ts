@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { AppDataSource } from "../datasource";
 import { Image } from "../entities/Image";
+import logger from "../helpers/logger";
 
 const router = Router();
 
@@ -31,7 +32,7 @@ router.get("/:id", async (req, res) => {
       }
     });
   } catch (error) {
-    console.error("Get image error:", error);
+    logger.error("Get image error:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error while fetching image"
