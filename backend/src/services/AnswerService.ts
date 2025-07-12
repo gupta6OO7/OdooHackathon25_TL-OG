@@ -18,40 +18,47 @@ export class AnswerService {
   }
 
   async createAnswer(req: Request, res: Response) {
-  try {
-    const { title, description, userId, questionId } = req.body;
+    try {
+      const { title, description, userId, questionId } = req.body;
 
-    const user = await this.userRepository.findOneBy({ id: userId });
-    const question = await this.questionRepository.findOneBy({ id: questionId });
+      const user = await this.userRepository.findOneBy({ id: userId });
+      const question = await this.questionRepository.findOneBy({
+        id: questionId,
+      });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      if (!question) {
+        return res.status(404).json({ message: "Question not found" });
+      }
+
+      const answer = this.answerRepository.create({
+        title,
+        description,
+        question,
+        user,
+      });
+
+      const savedAnswer = await this.answerRepository.save(answer);
+
+      return res.status(200).json(savedAnswer);
+    } catch (error) {
+      logger.error("Error creating answer:", error);
+      return res.status(500).json({ message: "Internal server error" });
     }
-    if (!question) {
-      return res.status(404).json({ message: "Question not found" });
-    }
-
-    const answer = this.answerRepository.create({
-      title,
-      description,
-      question,
-      user
-    });
-
-    const savedAnswer = await this.answerRepository.save(answer);
-
-    return res.status(200).json(savedAnswer);
-  } catch (error) {
-    logger.error("Error creating answer:", error);
-    return res.status(500).json({ message: "Internal server error" });
   }
-}
 
   async getAnswer(req: Request, res: Response) {
-    const allAnswers = await this.answerRepository.find();
-    if (!allAnswers) {
-      return res.status(404).json({ message: "Answers not found" });
+    try {
+      const allAnswers = await this.answerRepository.find();
+      if (!allAnswers) {
+        return res.status(404).json({ message: "Answers not found" });
+      }
+      return res.status(200).json(allAnswers);
+    } catch (error) {
+      logger.error("Error creating answers:", error);
+      return res.status(500).json({ message: "Internal server error" });
     }
-    return res.status(200).json(allAnswers);
   }
 }

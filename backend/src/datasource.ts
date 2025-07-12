@@ -14,7 +14,7 @@ export const AppDataSource = new DataSource({
     rejectUnauthorized: false // For hosted databases like Heroku, Railway, etc.
   } : false,
   synchronize: process.env.NODE_ENV === "development",
-  logging: process.env.NODE_ENV === "development",
+  logging: false,
   entities: ["src/entities/**/*.ts"],
   migrations: ["src/migrations/**/*.ts"],
   subscribers: ["src/subscribers/**/*.ts"],
