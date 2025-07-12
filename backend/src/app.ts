@@ -50,12 +50,14 @@ app.use(errorHandler);
 // Initialize database and start server
 const startServer = async () => {
   try {
-    await AppDataSource.initialize();
-    console.log("✅ Database connection established");
+    // Skip database initialization for dummy API testing
+    // await AppDataSource.initialize();
+    console.log("⚠️  Database connection skipped for dummy API testing");
     
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
+      console.log(`🧪 Dummy API: http://localhost:${PORT}/api/dummy`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
     });
   } catch (error) {
