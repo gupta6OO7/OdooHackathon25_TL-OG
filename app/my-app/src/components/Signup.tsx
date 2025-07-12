@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { authAPI, authUtils } from '../services/api';
+import { RedirectService } from '../services/redirectService';
 import type { SignupRequest } from '../services/api';
 import './auth-desktop.css';
 
@@ -70,14 +71,22 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, onSwitchToLogin }) => 
       const response = await authAPI.signup(signupData);
       
       if (response.success && response.data) {
-        // Save token to localStorage
+        // Save token and user data to localStorage
         authUtils.saveToken(response.data.token);
+        authUtils.saveUser(response.data.user);
         
         // Show success message
         alert(`Welcome, ${response.data.user.name}! Account created successfully.`);
         
-        // Call success callback
-        onSignupSuccess();
+        // Handle redirect after signup
+        const redirectPath = RedirectService.getPostLoginRedirect();
+        if (redirectPath !== '/') {
+          // If there's a specific redirect path, navigate there
+          window.location.href = redirectPath;
+        } else {
+          // Otherwise use the default success callback
+          onSignupSuccess();
+        }
       } else {
         setError(response.message || 'Signup failed');
       }
