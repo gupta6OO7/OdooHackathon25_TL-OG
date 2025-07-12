@@ -21,7 +21,15 @@
   "devDependencies": {
     "concurrently": "^8.2.0"
   },
-  "keywords": ["fullstack", "react", "nodejs", "typescript"],
+  "keywords": [
+    "fullstack",
+    "react",
+    "nodejs",
+    "typescript"
+  ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "helmet": "^8.1.0"
+  }
 }

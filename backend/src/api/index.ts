@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { DummyController } from "../controller/DummyController";
+import authRoutes from "./auth";
+import exampleRoutes from "./examples";
 
 const router = Router();
 
@@ -20,10 +22,32 @@ router.get("/", (req, res) => {
     version: "1.0.0",
     endpoints: {
       health: "/api/health",
+      auth: {
+        signup: "/api/auth/signup",
+        login: "/api/auth/login",
+        profile: "/api/auth/profile",
+        verifyToken: "/api/auth/verify-token",
+        logout: "/api/auth/logout"
+      },
+      examples: {
+        public: "/api/examples/public",
+        protected: "/api/examples/protected",
+        adminOnly: "/api/examples/admin-only",
+        adminOrModerator: "/api/examples/admin-or-moderator",
+        customRole: "/api/examples/custom-role",
+        optionalAuth: "/api/examples/optional-auth",
+        myData: "/api/examples/my-data"
+      },
       dummy: "/api/dummy"
     }
   });
 });
+
+// Authentication routes
+router.use("/auth", authRoutes);
+
+// Example routes demonstrating authentication middleware usage
+router.use("/examples", exampleRoutes);
 
 // Dummy API routes
 router.get("/dummy", DummyController.getDummyData);
