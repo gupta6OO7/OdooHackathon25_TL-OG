@@ -7,9 +7,12 @@ import {
   Box,
   Alert,
   CircularProgress,
-  Grid
+  Grid,
+  Tabs,
+  Tab
 } from '@mui/material';
 import { apiService } from '../services/api';
+import DummyApiTest from '../components/DummyApiTest';
 
 interface ApiStatus {
   success: boolean;
@@ -21,6 +24,11 @@ const Home: React.FC = () => {
   const [apiStatus, setApiStatus] = useState<ApiStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [tabValue, setTabValue] = useState(0);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
 
   const checkApiStatus = async () => {
     try {
@@ -50,77 +58,86 @@ const Home: React.FC = () => {
         Your Full-Stack Q&A Platform
       </Typography>
 
-      <Grid container spacing={3} sx={{ mt: 4 }}>
-        <Grid item xs={12} md={6}>
-          <Card elevation={3}>
-            <CardContent>
-              <Typography variant="h5" component="h2" gutterBottom>
-                Frontend
-              </Typography>
-              <Typography variant="body1" color="textSecondary" paragraph>
-                Built with React + TypeScript + Material-UI
-              </Typography>
-              <Typography variant="body2">
-                • Modern React with hooks<br/>
-                • TypeScript for type safety<br/>
-                • Material-UI for beautiful components<br/>
-                • React Router for navigation
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 4, mb: 3 }}>
+        <Tabs value={tabValue} onChange={handleTabChange} centered>
+          <Tab label="🏠 Home" />
+          <Tab label="🧪 API Test" />
+        </Tabs>
+      </Box>
 
-        <Grid item xs={12} md={6}>
-          <Card elevation={3}>
-            <CardContent>
-              <Typography variant="h5" component="h2" gutterBottom>
-                Backend API Status
-              </Typography>
-              
-              {loading && (
-                <Box display="flex" alignItems="center" gap={2}>
-                  <CircularProgress size={20} />
-                  <Typography>Checking API connection...</Typography>
-                </Box>
-              )}
-
-              {error && (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                  {error}
-                </Alert>
-              )}
-
-              {apiStatus && !loading && (
-                <Alert severity="success" sx={{ mb: 2 }}>
-                  ✅ Backend Connected: {apiStatus.message}
-                </Alert>
-              )}
-
-              <Typography variant="body2" color="textSecondary" paragraph>
-                Backend built with Node.js + TypeScript + Express + TypeORM
-              </Typography>
-
-              <Button 
-                variant="outlined" 
-                onClick={checkApiStatus}
-                disabled={loading}
-              >
-                Refresh API Status
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      <Card sx={{ mt: 4 }} elevation={2}>
-        <CardContent>
-          <Typography variant="h5" component="h2" gutterBottom>
-            Project Structure
-          </Typography>
-          <Grid container spacing={2}>
+      {tabValue === 0 && (
+        <>
+          <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
-              <Typography variant="h6" gutterBottom>Backend Structure:</Typography>
-              <Typography variant="body2" component="pre" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
+              <Card elevation={3}>
+                <CardContent>
+                  <Typography variant="h5" component="h2" gutterBottom>
+                    Frontend
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary" paragraph>
+                    Built with React + TypeScript + Material-UI
+                  </Typography>
+                  <Typography variant="body2">
+                    • Modern React with hooks<br/>
+                    • TypeScript for type safety<br/>
+                    • Material-UI for beautiful components<br/>
+                    • React Router for navigation
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Card elevation={3}>
+                <CardContent>
+                  <Typography variant="h5" component="h2" gutterBottom>
+                    Backend API Status
+                  </Typography>
+                  
+                  {loading && (
+                    <Box display="flex" alignItems="center" gap={2}>
+                      <CircularProgress size={20} />
+                      <Typography>Checking API connection...</Typography>
+                    </Box>
+                  )}
+
+                  {error && (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                      {error}
+                    </Alert>
+                  )}
+
+                  {apiStatus && !loading && (
+                    <Alert severity="success" sx={{ mb: 2 }}>
+                      ✅ Backend Connected: {apiStatus.message}
+                    </Alert>
+                  )}
+
+                  <Typography variant="body2" color="textSecondary" paragraph>
+                    Backend built with Node.js + TypeScript + Express + TypeORM
+                  </Typography>
+
+                  <Button 
+                    variant="outlined" 
+                    onClick={checkApiStatus}
+                    disabled={loading}
+                  >
+                    Refresh API Status
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+
+          <Card sx={{ mt: 4 }} elevation={2}>
+            <CardContent>
+              <Typography variant="h5" component="h2" gutterBottom>
+                Project Structure
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <Typography variant="h6" gutterBottom>Backend Structure:</Typography>
+                  <Typography variant="body2" component="pre" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
 {`backend/
 ├── src/
 │   ├── api/           # API routes
@@ -136,11 +153,11 @@ const Home: React.FC = () => {
 │   ├── types/         # Type definitions
 │   ├── app.ts         # Main app file
 │   └── datasource.ts  # Database config`}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography variant="h6" gutterBottom>Frontend Structure:</Typography>
-              <Typography variant="body2" component="pre" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant="h6" gutterBottom>Frontend Structure:</Typography>
+                  <Typography variant="body2" component="pre" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
 {`frontend/
 ├── src/
 │   ├── components/    # Reusable components
@@ -151,11 +168,17 @@ const Home: React.FC = () => {
 │   ├── utils/         # Utility functions
 │   ├── App.tsx        # Main app component
 │   └── index.tsx      # Entry point`}
-              </Typography>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
+                  </Typography>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </>
+      )}
+
+      {tabValue === 1 && (
+        <DummyApiTest />
+      )}
     </Box>
   );
 };
