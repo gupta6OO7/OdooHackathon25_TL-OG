@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import RichTextEditor from './RichTextEditor';
 import './AskQuestion.css';
 import { authUtils } from '../services/api';
 
@@ -82,12 +83,10 @@ const AskQuestion: React.FC = () => {
         />
 
         <label>Description</label>
-        <textarea
-          placeholder="Describe your question in detail..."
+        <RichTextEditor
+          placeholder="Describe your question in detail. You can use formatting, code blocks, and lists..."
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={6}
-          required
+          onChange={setDescription}
         />
 
         <label>Select Tags</label>

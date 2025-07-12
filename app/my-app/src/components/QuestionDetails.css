@@ -1,26 +1,35 @@
+/* Quora-inspired dark theme for question details */
 .question-details-container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 0 16px;
-    background-color: #fff;
-  }
+  max-width: 820px;
+  margin: 40px auto;
+  padding: 32px 24px 48px 24px;
+  background: rgba(24, 26, 32, 0.98);
+  border-radius: 18px;
+  box-shadow: 0 8px 40px 0 rgba(0,0,0,0.45);
+  color: #e2e8f0;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  position: relative;
+}
   
   .question-title {
-    font-size: 24px;
+    font-size: 2rem;
     margin-bottom: 8px;
-    color: #0074cc;
+    color: #e2e8f0;
+    font-weight: 700;
+    letter-spacing: -0.5px;
   }
   
   .question-meta {
-    font-size: 13px;
-    color: #777;
+    font-size: 0.98rem;
+    color: #a0aec0;
     margin-bottom: 16px;
   }
   
   .question-description {
-    font-size: 16px;
-    line-height: 1.5;
-    margin-bottom: 16px;
+    font-size: 1.13rem;
+    line-height: 1.7;
+    margin-bottom: 18px;
+    color: #e2e8f0;
   }
   
   .question-tags {
@@ -29,41 +38,51 @@
   
   .tag {
     display: inline-block;
-    background-color: #eee;
-    color: #444;
-    padding: 4px 8px;
-    margin-right: 6px;
-    border-radius: 4px;
-    font-size: 12px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 4px 12px;
+    margin-right: 8px;
+    border-radius: 999px;
+    font-size: 0.93rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin-bottom: 4px;
   }
   
   .answer-section-title {
-    font-size: 20px;
-    margin-top: 32px;
-    margin-bottom: 16px;
+    font-size: 1.3rem;
+    margin-top: 36px;
+    margin-bottom: 18px;
+    color: #f093fb;
+    font-weight: 600;
   }
   
   .answer-card {
-    border: 1px solid #ddd;
-    padding: 12px;
-    margin-bottom: 16px;
-    border-radius: 6px;
-    background-color: #fafafa;
+    border: 1px solid #23263a;
+    padding: 18px 18px 10px 18px;
+    margin-bottom: 18px;
+    border-radius: 10px;
+    background: rgba(36, 38, 48, 0.98);
+    color: #e2e8f0;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.13);
+    transition: box-shadow 0.2s;
   }
   
   .answer-card.accepted {
-    border-left: 4px solid green;
-    background-color: #f1fff1;
+    border-left: 4px solid #38d39f;
+    background: linear-gradient(90deg, #23263a 80%, #38d39f22 100%);
   }
   
   .answer-content {
-    font-size: 15px;
+    font-size: 1.08rem;
     margin-bottom: 8px;
+    color: #e2e8f0;
   }
   
   .answer-meta {
-    font-size: 13px;
-    color: #666;
+    font-size: 0.97rem;
+    color: #a0aec0;
+    margin-bottom: 6px;
   }
   
   .answer-textarea {
@@ -71,24 +90,60 @@
     height: 120px;
     padding: 8px;
     font-size: 14px;
-    border: 1px solid #ccc;
+    border: 1px solid #23263a;
     border-radius: 6px;
     margin-top: 12px;
     margin-bottom: 12px;
     resize: vertical;
+    background: #23263a;
+    color: #e2e8f0;
   }
   
   .submit-btn {
-    padding: 10px 20px;
-    background-color: #0074cc;
-    color: white;
+    padding: 10px 24px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin-top: 10px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.13);
+    transition: background 0.2s, box-shadow 0.2s;
   }
   
   .submit-btn:disabled {
-    background-color: #ccc;
+    background: #23263a;
+    color: #888;
     cursor: not-allowed;
+    box-shadow: none;
   }
+
+.breadcrumbs {
+  font-size: 0.98rem;
+  color: #a0aec0;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.breadcrumb-link {
+  color: #f093fb;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 500;
+}
+.breadcrumb-sep {
+  color: #a0aec0;
+}
+.breadcrumb-current {
+  color: #e2e8f0;
+  font-weight: 600;
+}
+.no-answers {
+  color: #a0aec0;
+  font-style: italic;
+  margin-bottom: 18px;
+}
   

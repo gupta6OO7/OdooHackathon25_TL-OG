@@ -1,0 +1,134 @@
+/* Rich Text Editor Styles */
+.rich-text-editor {
+  border: 1px solid #2a2a40;
+  border-radius: 8px;
+  background: rgba(42, 42, 64, 0.3);
+  overflow: hidden;
+}
+
+.rte-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(15, 15, 23, 0.8);
+  border-bottom: 1px solid #2a2a40;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.rte-btn {
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  color: #e2e8f0;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.rte-btn:hover {
+  background: rgba(102, 126, 234, 0.2);
+  border-color: rgba(102, 126, 234, 0.5);
+  transform: translateY(-1px);
+}
+
+.rte-btn:active {
+  transform: translateY(0);
+}
+
+.rte-divider {
+  width: 1px;
+  height: 20px;
+  background: #2a2a40;
+  margin: 0 4px;
+}
+
+.rte-content {
+  outline: none;
+  font-family: inherit;
+}
+
+.rte-content:empty::before {
+  content: attr(data-placeholder);
+  color: #64748b;
+  pointer-events: none;
+  font-style: italic;
+}
+
+.rte-content:focus {
+  background: rgba(42, 42, 64, 0.8) !important;
+}
+
+/* Content styling */
+.rte-content strong {
+  font-weight: bold;
+}
+
+.rte-content em {
+  font-style: italic;
+}
+
+.rte-content u {
+  text-decoration: underline;
+}
+
+.rte-content ul, .rte-content ol {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.rte-content li {
+  margin: 4px 0;
+}
+
+.rte-content pre {
+  background: rgba(15, 15, 23, 0.8);
+  border: 1px solid #2a2a40;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.rte-content code {
+  background: rgba(15, 15, 23, 0.6);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.rte-content a {
+  color: #667eea;
+  text-decoration: underline;
+}
+
+.rte-content a:hover {
+  color: #764ba2;
+}
+
+/* Compact version for comments */
+.rich-text-editor.compact {
+  border-radius: 6px;
+}
+
+.rich-text-editor.compact .rte-toolbar {
+  padding: 6px 8px;
+  gap: 2px;
+}
+
+.rich-text-editor.compact .rte-btn {
+  padding: 4px 6px;
+  font-size: 11px;
+}
+
+.rich-text-editor.compact .rte-content {
+  min-height: 60px;
+  padding: 8px;
+  font-size: 13px;
+}

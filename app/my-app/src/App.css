@@ -147,3 +147,62 @@ a:hover {
   background-size: 200px 100%;
   animation: shimmer 2s infinite;
 }
+
+/* Comment input styling */
+.add-comment-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.add-comment-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 13px;
+  max-width: 120px;
+}
+
+.add-comment-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.add-comment-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Answer comments styling */
+.answer-comments {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #2a2a40;
+}
+
+.comments-list {
+  margin-bottom: 12px;
+}
+
+.comment-item {
+  background: rgba(15, 15, 23, 0.4);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  border-left: 3px solid rgba(102, 126, 234, 0.3);
+}
+
+.comment-author {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.comment-time {
+  color: #64748b;
+  font-size: 11px;
+}

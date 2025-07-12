@@ -1,3 +1,11 @@
+// Vote on answer
+export interface VoteAnswerRequest {
+  answerId: string;
+  title: string;
+  description: string;
+  userId: string;
+  vote: 1 | -1;
+}
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:3001/api';
@@ -104,6 +112,38 @@ export const imageAPI = {
   // Get image by ID
   getImage: async (imageId: string): Promise<{ success: boolean; data?: { id: string; bufferString: string } }> => {
     const response = await api.get(`/images/${imageId}`);
+    return response.data;
+  },
+};
+
+// Answers API functions
+export interface PostAnswerRequest {
+  description: string;
+  questionId: string;
+  title?: string;
+}
+
+export const answersAPI = {
+  postAnswer: async ({ description, questionId, title }: PostAnswerRequest) => {
+    const user = authUtils.getUser();
+    if (!user) throw new Error('User not logged in');
+    const response = await api.post('/answers', {
+      description,
+      userId: user.id,
+      questionId,
+      ...(title !== undefined ? { title } : {}),
+    });
+    return response.data;
+  },
+  voteAnswer: async (voteData: VoteAnswerRequest) => {
+    // Ensure userId is present and a string
+    let userId = voteData.userId;
+    if (!userId) {
+      const user = authUtils.getUser();
+      if (!user) throw new Error('User not logged in');
+      userId = user.id;
+    }
+    const response = await api.put('/answers', { ...voteData, userId });
     return response.data;
   },
 };
