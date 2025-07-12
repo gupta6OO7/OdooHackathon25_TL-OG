@@ -5,11 +5,13 @@ import Dashboard from './components/Dashboard';
 import { authUtils } from './services/api';
 import './App.css';
 import Home from './pages/Home';
+import QuestionDetails from './pages/QuestionDetails';
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/questionDetails" element={<QuestionDetails />} />
         <Route path="/feed" element={<Home />} />
         <Route path="/login" element={<LoginWrapper />} />
         <Route path="/signup" element={<SignupWrapper />} />
