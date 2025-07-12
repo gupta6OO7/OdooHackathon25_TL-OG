@@ -6,7 +6,7 @@ const router = Router();
 const authController = new AuthController();
 
 // Public routes (no authentication required)
-router.post("/signup", authController.upload.single("profilePhoto"), authController.signup);
+router.post("/signup", authController.signup);
 router.post("/login", authController.login);
 
 // Protected routes (authentication required)
