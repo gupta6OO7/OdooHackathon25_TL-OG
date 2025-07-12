@@ -8,6 +8,7 @@ import {
 import { User } from "./User";
 import { Question } from "./Question";
 import { Image } from "./Image";
+import { Comment } from "./Comment";
 
 @Entity()
 export class Answer {
@@ -21,10 +22,7 @@ export class Answer {
   description: string;
 
   @Column({ default: 0 })
-  upvotes: number;
-
-  @Column({ default: 0 })
-  downvotes: number;
+  votes: number;
 
   @ManyToOne(() => User, (user) => user.answers)
   user: User;
@@ -34,4 +32,7 @@ export class Answer {
 
   @OneToMany(() => Image, (image) => image.answer)
   images: Image[];
+
+  @OneToMany(() => Comment, comment => comment.answer, { cascade: true })
+  comments: Comment[];
 }

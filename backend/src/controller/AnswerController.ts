@@ -30,4 +30,15 @@ export class AnswerController {
       });
     }
   };
+
+  updateAnswerController = async (req: Request, res: Response) => {
+    try {
+      await this.answerService.updateAnswer(req, res);
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  };
 }
