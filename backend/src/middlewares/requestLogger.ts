@@ -7,7 +7,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
   const url = req.url;
   const userAgent = req.get("User-Agent") || "";
   
-  logger.info(`[${timestamp}] ${method} ${url} - ${userAgent}`);
+  logger.info(`${method} ${url} - ${userAgent}`);
   
   next();
 };

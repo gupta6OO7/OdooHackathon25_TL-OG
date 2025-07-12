@@ -18,10 +18,11 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(helmet());
-app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
-  credentials: true
-}));
+// app.use(cors({
+//   origin: process.env.FRONTEND_URL || "http://localhost:3000",
+//   credentials: true
+// }));
+app.use(cors())
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -67,7 +68,7 @@ const startServer = async () => {
       logger.info(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
     });
   } catch (error) {
-    console.error("❌ Error starting server:", error);
+    logger.error("❌ Error starting server:", error);
     process.exit(1);
   }
 };
