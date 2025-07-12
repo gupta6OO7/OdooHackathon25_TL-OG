@@ -30,4 +30,15 @@ export class QuestionController {
       });
     }
   };
+
+  getQuestionAnswersController = async (req: Request, res: Response) => {
+    try {
+      await this.questionService.getQuestionAnswers(req, res);
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  };
 }
