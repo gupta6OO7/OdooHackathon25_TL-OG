@@ -1,27 +1,55 @@
-// Example service
+import { AppDataSource } from "../datasource";
+import { Repository } from "typeorm";
+import { Request, Response } from "express";
+import { User } from "../entities/User";
+import logger from "../helpers/logger";
+
 export class UserService {
-  static async getAllUsers() {
-    // TODO: Implement database query
-    return [];
+  private userRepository: Repository<User>;
+
+  constructor() {
+    this.userRepository = AppDataSource.getRepository(User);
   }
 
-  static async getUserById(id: string) {
-    // TODO: Implement database query
-    return null;
+  async getUser(req: Request, res: Response) {
+    try {
+      const userId = req.params.userId;
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ["answers", "questions"]
+      });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      return res.status(200).json(user);
+    } catch (error) {
+      logger.error("Error fetching user:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
 
-  static async createUser(userData: any) {
-    // TODO: Implement user creation logic
-    return { id: "generated-id", ...userData };
+  async getUserNotification(req: Request, res: Response) {
+    try {
+      const userId = req.params.userId;
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+      });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      if (!user.notifications) {
+        user.notifications = {"unread":[], 'read':[]};
+      }
+      const notifs = JSON.parse(JSON.stringify(user.notifications));
+      user.notifications.read = [...user.notifications.unread, ...user.notifications.read];
+      user.notifications.unread = [];
+      await this.userRepository.save(user);
+      return res.status(200).json(notifs);
+    } catch (error) {
+      logger.error("Error fetching user:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
 
-  static async updateUser(id: string, userData: any) {
-    // TODO: Implement user update logic
-    return { id, ...userData };
-  }
-
-  static async deleteUser(id: string) {
-    // TODO: Implement user deletion logic
-    return { success: true };
-  }
+  
 }

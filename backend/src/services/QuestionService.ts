@@ -58,7 +58,7 @@ export class QuestionService {
       const questionId = req.params.questionId;
       const question = await this.questionRepository.findOne({
         where: { id: questionId },
-        relations: ["answers"]
+        relations: ["answers"],
       });
       if (!question) {
         return res.status(404).json({ message: "Question not found" });
@@ -66,6 +66,29 @@ export class QuestionService {
       return res.status(200).json(question);
     } catch (error) {
       logger.error("Error fetching question:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  async deleteQuestion(req: Request, res: Response) {
+    try {
+      const questionId = req.params.questionId;
+      const question = await this.questionRepository.findOne({
+        where: { id: questionId },
+        relations: ["answers", "images"],
+      });
+
+      if (!question) {
+        return res.status(404).json({ message: "Question not found" });
+      }
+
+      await this.questionRepository.remove(question);
+
+      return res
+        .status(200)
+        .json({ message: "Question and related data deleted successfully" });
+    } catch (error) {
+      console.error("Delete error:", error);
       return res.status(500).json({ message: "Internal server error" });
     }
   }

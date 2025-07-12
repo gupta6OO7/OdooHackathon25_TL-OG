@@ -4,6 +4,7 @@ import exampleRoutes from "./examples";
 import imageRoutes from "./images";
 import questionRoutes from "./question";
 import answerRoutes from "./answer";
+import userRoutes from "./user";
 
 const router = Router();
 
@@ -61,5 +62,8 @@ router.use("/questions", questionRoutes);
 
 // Answer routes
 router.use("/answers", answerRoutes);
+
+// User routes
+router.use("/users", userRoutes);
 
 export default router;
