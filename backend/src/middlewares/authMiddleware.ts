@@ -54,7 +54,7 @@ export class AuthMiddleware {
 
       next();
     } catch (error) {
-      console.error("Token verification error:", error);
+      logger.error("Token verification error:", error);
       return res.status(401).json({
         success: false,
         message: "Invalid or expired token. Please login again."
@@ -120,7 +120,7 @@ export class AuthMiddleware {
 
       next();
     } catch (error) {
-      console.error("Optional auth error:", error);
+      logger.error("Optional auth error:", error);
       next(); // Continue even if there's an error
     }
   };
