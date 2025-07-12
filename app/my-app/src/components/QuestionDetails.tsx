@@ -9,6 +9,7 @@ interface Answer {
   id: string;
   content: string;
   author: string;
+  userId?: string;
   createdAt: string;
   voteCount: number;
   isAccepted: boolean;
@@ -18,6 +19,8 @@ interface Answer {
     content: string;
     createdAt: string;
   }>;
+  votes?: number;
+  description?: string;
 }
 
 interface Question {
@@ -26,6 +29,7 @@ interface Question {
   description: string;
   tags: string[];
   author: string;
+  userId?: string;
   createdAt: string;
   answers: Answer[];
 }
@@ -41,6 +45,23 @@ const QuestionDetails: React.FC = () => {
   const [commentInputs, setCommentInputs] = useState<{ [answerId: string]: string }>({});
   const [answerContent, setAnswerContent] = useState('');
   const isLoggedIn = authUtils.isLoggedIn();
+  // Cache for userId to userName
+  const [userNames, setUserNames] = useState<{ [userId: string]: string }>({});
+
+  // Helper to fetch userName by userId and cache it
+  const fetchUserName = async (userId: string) => {
+    if (!userId) return '';
+    if (userNames[userId]) return userNames[userId];
+    try {
+      const res = await api.get(`/users/${userId}`);
+      const userName = res.data?.userName || 'Unknown';
+      setUserNames(prev => ({ ...prev, [userId]: userName }));
+      return userName;
+    } catch {
+      setUserNames(prev => ({ ...prev, [userId]: 'Unknown' }));
+      return 'Unknown';
+    }
+  };
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -48,7 +69,16 @@ const QuestionDetails: React.FC = () => {
       setError('');
       try {
         const res = await api.get(`/questions/answers?questionId=${id}`);
-        setQuestion(res.data);
+        const q = res.data;
+        // Fetch userName for question author
+        if (q.userId) fetchUserName(q.userId);
+        // Fetch userNames for all answer authors
+        if (Array.isArray(q.answers)) {
+          q.answers.forEach((ans: any) => {
+            if (ans.userId) fetchUserName(ans.userId);
+          });
+        }
+        setQuestion(q);
       } catch (err: any) {
         setError('Failed to load question.');
       } finally {
@@ -56,6 +86,7 @@ const QuestionDetails: React.FC = () => {
       }
     };
     fetchQuestion();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleCommentChange = (answerId: string, value: string) => {
@@ -85,7 +116,7 @@ const QuestionDetails: React.FC = () => {
 
       <h1 className="question-title">{question.title}</h1>
       <div className="question-meta">
-        Posted by {question.author} • {new Date(question.createdAt).toLocaleString()}
+        Posted by {question.userId ? (userNames[question.userId] || '...') : 'Unknown'}
       </div>
       <div className="question-description" dangerouslySetInnerHTML={{ __html: question.description }} />
 
@@ -94,41 +125,114 @@ const QuestionDetails: React.FC = () => {
           <span key={tag} className="tag">#{tag}</span>
         ))}
       </div>
-
       <h2 className="answer-section-title">Answers</h2>
       {(question.answers || []).length === 0 && <div className="no-answers">No answers yet.</div>}
       {(question.answers || []).map((ans) => (
-        <div key={ans.id} className={`answer-card ${ans.isAccepted ? 'accepted' : ''}`}>
-          <div className="answer-content" dangerouslySetInnerHTML={{ __html: ans.content }} />
-          <div className="answer-meta">
-            {ans.isAccepted && <strong>✔ Accepted • </strong>}
-            {ans.voteCount} votes • Answered by {ans.author} on {new Date(ans.createdAt).toLocaleString()}
+        <div key={ans.id} className={`answer-card ${ans.isAccepted ? 'accepted' : ''}`} style={{ display: 'flex', alignItems: 'flex-start', gap: 18 }}>
+          {/* Votes on the left */}
+          <div style={{ minWidth: 48, textAlign: 'center', color: '#a0aec0', fontWeight: 600, fontSize: '1.1rem', marginRight: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <button
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#f87171',
+                fontSize: '1.5rem',
+                lineHeight: 1,
+                padding: 0,
+                marginBottom: 2,
+                transition: 'color 0.2s',
+              }}
+              title="Upvote"
+              onClick={async () => {
+                if (!isLoggedIn) return;
+                try {
+                  await answersAPI.voteAnswer({
+                    answerId: ans.id,
+                    title: ans.title || '',
+                    description: ans.description || ans.content || '',
+                    userId: authUtils.getUser()?.id,
+                    vote: 1
+                  });
+                  // Refresh question/answers
+                  const res = await api.get(`/questions/answers?questionId=${question.id}`);
+                  setQuestion(res.data);
+                } catch {}
+              }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 5 5 19 19 19" /></svg>
+            </button>
+            <div style={{ fontSize: '1.5rem', color: '#f093fb', fontWeight: 700 }}>{typeof ans.votes === 'number' ? ans.votes : (ans.voteCount ?? 0)}</div>
+            <button
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#60a5fa',
+                fontSize: '1.5rem',
+                lineHeight: 1,
+                padding: 0,
+                marginTop: 2,
+                transition: 'color 0.2s',
+              }}
+              title="Downvote"
+              onClick={async () => {
+                if (!isLoggedIn) return;
+                try {
+                  await answersAPI.voteAnswer({
+                    answerId: ans.id,
+                    title: ans.title || '',
+                    description: ans.description || ans.content || '',
+                    userId: authUtils.getUser()?.id,
+                    vote: -1
+                  });
+                  // Refresh question/answers
+                  const res = await api.get(`/questions/answers?questionId=${question.id}`);
+                  setQuestion(res.data);
+                } catch {}
+              }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 19 5 5 19 5" /></svg>
+            </button>
+            <div style={{ fontSize: '0.95rem', color: '#a0aec0' }}>votes</div>
           </div>
-          {/* Comments Section */}
-          <div className="answer-comments">
-            <div className="comments-list">
-              {(ans.comments || []).map((c) => (
-                <div key={c.id} className="comment-item">
-                  <span className="comment-author">{c.author}:</span> {c.content}
-                  <span className="comment-time"> • {new Date(c.createdAt).toLocaleString()}</span>
-                </div>
-              ))}
+          {/* Answer content and comments */}
+          <div style={{ flex: 1 }}>
+            <div className="answer-content" dangerouslySetInnerHTML={{ __html: ans.description || ans.content }} />
+            <div className="answer-meta">
+              {ans.isAccepted && <strong>✔ Accepted • </strong>}
+              Answered by {ans.userId ? (userNames[ans.userId] || '...') : 'Unknown'}
             </div>
-            <div className="add-comment-row">
-              <RichTextEditor
-                placeholder="Add a comment..."
-                value={commentInputs[ans.id] || ''}
-                onChange={(value) => handleCommentChange(ans.id, value)}
-                className="compact"
-              />
-              <button
-                className="add-comment-btn"
-                onClick={() => handleAddComment(ans.id)}
-                disabled={!(commentInputs[ans.id] && commentInputs[ans.id].trim())}
-                style={{ marginTop: '8px', alignSelf: 'flex-start' }}
-              >
-                Add Comment
-              </button>
+            {/* Comments Section */}
+            <div className="answer-comments" style={{ marginTop: 10 }}>
+              <div className="comments-list" style={{ fontSize: '0.97rem', opacity: 0.92 }}>
+                {(ans.comments || []).map((c) => (
+                  <div key={c.id} className="comment-item">
+                    <span className="comment-author">{c.author}:</span> {c.content}
+                  </div>
+                ))}
+              </div>
+              <div className="add-comment-row" style={{ marginTop: 6, width: '100%' }}>
+                <div style={{ width: '100%' }}>
+                  <RichTextEditor
+                    placeholder="Add a comment..."
+                    value={commentInputs[ans.id] || ''}
+                    onChange={(value) => handleCommentChange(ans.id, value)}
+                    className="compact"
+                    style={{ minHeight: 32, maxHeight: 60, overflowY: 'auto', transition: 'max-height 0.2s', width: '100%' }}
+                    onFocus={e => e.currentTarget.style.maxHeight = '120px'}
+                    onBlur={e => e.currentTarget.style.maxHeight = '60px'}
+                  />
+                </div>
+                <button
+                  className="add-comment-btn"
+                  onClick={() => handleAddComment(ans.id)}
+                  disabled={!(commentInputs[ans.id] && commentInputs[ans.id].trim())}
+                  style={{ marginTop: '8px', alignSelf: 'flex-start' }}
+                >
+                  Add Comment
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -159,6 +263,7 @@ const QuestionDetails: React.FC = () => {
               await answersAPI.postAnswer({
                 description: answerContent,
                 questionId: question.id,
+                title: ""
               });
               setAnswerContent('');
               // Refresh question/answers
