@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import { AppDataSource } from "../datasource";
-import { User } from "../entities/User";
+import { User, UserRole } from "../entities/User";
+import { Image } from "../entities/Image";
 import { Repository } from "typeorm";
 
 export interface LoginRequest {
@@ -14,8 +15,8 @@ export interface SignupRequest {
   userName: string;
   email: string;
   password: string;
-  role?: string;
-  profilePhoto?: string;
+  role?: UserRole;
+  imageBuffer?: string; // Base64 encoded image
 }
 
 export interface AuthResponse {
@@ -28,17 +29,19 @@ export interface AuthResponse {
       name: string;
       userName: string;
       email: string;
-      role: string;
-      profilePhoto?: string;
+      role: UserRole;
+      imageId?: string;
     };
   };
 }
 
 export class AuthService {
   private userRepository: Repository<User>;
+  private imageRepository: Repository<Image>;
 
   constructor() {
     this.userRepository = AppDataSource.getRepository(User);
+    this.imageRepository = AppDataSource.getRepository(Image);
   }
 
   async signup(userData: SignupRequest): Promise<AuthResponse> {
@@ -70,14 +73,23 @@ export class AuthService {
       const saltRounds = 12;
       const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
 
+      // Create image if provided
+      let savedImage: Image | undefined;
+      if (userData.imageBuffer) {
+        const image = this.imageRepository.create({
+          bufferString: userData.imageBuffer
+        });
+        savedImage = await this.imageRepository.save(image);
+      }
+
       // Create new user
       const user = this.userRepository.create({
         name: userData.name,
         userName: userData.userName,
         email: userData.email,
         password: hashedPassword,
-        role: userData.role || "user",
-        profilePhoto: userData.profilePhoto
+        role: userData.role || UserRole.USER,
+        image: savedImage
       });
 
       const savedUser = await this.userRepository.save(user);
@@ -96,7 +108,7 @@ export class AuthService {
             userName: savedUser.userName,
             email: savedUser.email,
             role: savedUser.role,
-            profilePhoto: savedUser.profilePhoto
+            imageId: savedUser.image?.id
           }
         }
       };
@@ -111,9 +123,10 @@ export class AuthService {
 
   async login(credentials: LoginRequest): Promise<AuthResponse> {
     try {
-      // Find user by email
+      // Find user by email with image relation
       const user = await this.userRepository.findOne({
-        where: { email: credentials.email }
+        where: { email: credentials.email },
+        relations: ["image"]
       });
 
       if (!user) {
@@ -155,7 +168,7 @@ export class AuthService {
             userName: user.userName,
             email: user.email,
             role: user.role,
-            profilePhoto: user.profilePhoto
+            imageId: user.image?.id
           }
         }
       };
@@ -196,7 +209,8 @@ export class AuthService {
   async getUserById(userId: string): Promise<User | null> {
     try {
       const user = await this.userRepository.findOne({
-        where: { id: userId }
+        where: { id: userId },
+        relations: ["image"]
       });
       return user;
     } catch (error) {
