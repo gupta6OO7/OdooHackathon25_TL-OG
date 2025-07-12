@@ -2,6 +2,7 @@ import { Router } from "express";
 import { DummyController } from "../controller/DummyController";
 import authRoutes from "./auth";
 import exampleRoutes from "./examples";
+import imageRoutes from "./images";
 
 const router = Router();
 
@@ -38,6 +39,9 @@ router.get("/", (req, res) => {
         optionalAuth: "/api/examples/optional-auth",
         myData: "/api/examples/my-data"
       },
+      images: {
+        getById: "/api/images/:id"
+      },
       dummy: "/api/dummy"
     }
   });
@@ -45,6 +49,9 @@ router.get("/", (req, res) => {
 
 // Authentication routes
 router.use("/auth", authRoutes);
+
+// Image routes
+router.use("/images", imageRoutes);
 
 // Example routes demonstrating authentication middleware usage
 router.use("/examples", exampleRoutes);
