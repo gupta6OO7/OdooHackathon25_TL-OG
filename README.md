@@ -3,6 +3,17 @@
 ## Problem statement - 2
 ## StackIt – A Minimal Q&A Forum Platform
 
+### Team Members
+
+| Name | Email Id     | Phone number                |
+| :-------- | :------- | :------------------------- |
+| Om Gupta | guptaom6007@gmail.com | 8278682310 |
+| Tarun Agarwal | tarunagarwal123789@gmail.com | 7014016735 |
+| Utkarsh Jain | jain.utkarsh215@gmail.com | 7425094343 |
+
+### Video Link
+
+[Demo Video](https://drive.google.com/file/d/1l0FwdCRpYosRhEJueBcT2lCXWg3ie0x5/view?usp=sharing)
 
 ## Deployment
 
