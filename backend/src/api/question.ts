@@ -9,7 +9,7 @@ const questionController = new QuestionController();
 router.post("/", questionController.createQuestionController);
 router.get("/", questionController.getAllQuestionController);
 router.get("/:questionId", questionController.getQuestionController);
-router.delete("/:questionId", questionController.deleteQuestionController);
+router.delete("/:questionId", authMiddleware, questionController.deleteQuestionController);
 router.get("/answers", questionController.getQuestionAnswersController);
 
 export default router;

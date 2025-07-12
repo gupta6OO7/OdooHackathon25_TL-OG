@@ -58,7 +58,7 @@ export class QuestionService {
       const questionId = req.params.questionId;
       const question = await this.questionRepository.findOne({
         where: { id: questionId },
-        relations: ["answers"],
+        relations: ["answers", "user", "answers.user"],
       });
       if (!question) {
         return res.status(404).json({ message: "Question not found" });
