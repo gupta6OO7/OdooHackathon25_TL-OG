@@ -1,29 +1,36 @@
-// Example User entity (replace with your actual entities)
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from "typeorm";
+import { Question } from "./Question";
+import { Answer } from "./Answer";
+import { Image } from "./Image";
 
-@Entity("users")
+@Entity()
 export class User {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ unique: true })
-  email: string;
-
   @Column()
-  password: string;
+  role: string;
 
   @Column()
   name: string;
 
-  @Column({ default: "user" })
-  role: string;
+  @Column("json", { nullable: true })
+  notifications: { title: string; description: string }[];
 
-  @Column({ default: true })
-  isActive: boolean;
+  @OneToMany(() => Question, (question) => question.user)
+  questions: Question[];
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @OneToMany(() => Answer, (answer) => answer.user)
+  answers: Answer[];
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @OneToOne(() => Image, (image) => image.user)
+  @JoinColumn()
+  image: Image;
 }
