@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { authAPI, authUtils } from '../services/api';
+import { RedirectService } from '../services/redirectService';
 import type { LoginRequest } from '../services/api';
 import './auth-desktop.css';
 
@@ -35,14 +36,22 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onSwitchToSignup }) => {
       const response = await authAPI.login(formData);
       
       if (response.success && response.data) {
-        // Save token to localStorage
+        // Save token and user data to localStorage
         authUtils.saveToken(response.data.token);
+        authUtils.saveUser(response.data.user);
         
         // Show success message
         alert(`Welcome back, ${response.data.user.name}!`);
         
-        // Call success callback
-        onLoginSuccess();
+        // Handle redirect after login
+        const redirectPath = RedirectService.getPostLoginRedirect();
+        if (redirectPath !== '/') {
+          // If there's a specific redirect path, navigate there
+          window.location.href = redirectPath;
+        } else {
+          // Otherwise use the default success callback
+          onLoginSuccess();
+        }
       } else {
         setError(response.message || 'Login failed');
       }
