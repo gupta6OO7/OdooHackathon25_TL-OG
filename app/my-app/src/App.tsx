@@ -8,11 +8,13 @@ import Home from './pages/Home';
 import QuestionDetails from './pages/QuestionDetails';
 import AskQuestion from './pages/AskQuestion';
 import Notifications from './pages/Notifications';
+import Tags from './pages/Tags';
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/tags" element={<Tags />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/ask" element={<AskQuestion />} />
         <Route path="/questionDetails" element={<QuestionDetails />} />
