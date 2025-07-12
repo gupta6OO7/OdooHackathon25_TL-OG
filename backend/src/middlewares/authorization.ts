@@ -6,7 +6,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-
+  
   // You can attach user info to `req` if needed
   // req.user = decodedUser;
 
