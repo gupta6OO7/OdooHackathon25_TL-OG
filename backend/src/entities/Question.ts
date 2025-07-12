@@ -29,7 +29,7 @@ export class Question {
   @ManyToOne(() => User, (user) => user.questions)
   user: User;
 
-  @OneToMany(() => Answer, (answer) => answer.question)
+  @OneToMany(() => Answer, (answer) => answer.question, { cascade: true })
   answers: Answer[];
 
   @OneToMany(() => Image, (image) => image.question)

@@ -27,7 +27,7 @@ export class Answer {
   @ManyToOne(() => User, (user) => user.answers)
   user: User;
 
-  @ManyToOne(() => Question, (question) => question.answers)
+  @ManyToOne(() => Question, (question) => question.answers, { onDelete: "CASCADE" })
   question: Question;
 
   @OneToMany(() => Image, (image) => image.answer)

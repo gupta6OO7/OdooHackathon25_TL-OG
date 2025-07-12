@@ -41,6 +41,16 @@ export class QuestionController {
       });
     }
   };
+  deleteQuestionController = async (req: Request, res: Response) => {
+    try {
+      await this.questionService.deleteQuestion(req, res);
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  };
 
   getQuestionAnswersController = async (req: Request, res: Response) => {
     try {
