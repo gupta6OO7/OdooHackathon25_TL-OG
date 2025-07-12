@@ -20,6 +20,9 @@ export class User {
 
   @Column()
   name: string;
+  
+  @Column()
+  email: string;
 
   @Column("json", { nullable: true })
   notifications: { title: string; description: string }[];
