@@ -108,6 +108,20 @@ export const imageAPI = {
   },
 };
 
+// Answers API functions
+export const answersAPI = {
+  postAnswer: async ({ description, questionId }: { description: string; questionId: string }) => {
+    const user = authUtils.getUser();
+    if (!user) throw new Error('User not logged in');
+    const response = await api.post('/answers', {
+      description,
+      userId: user.id,
+      questionId,
+    });
+    return response.data;
+  },
+};
+
 // Auth helper functions
 export const authUtils = {
   // Save token to localStorage

@@ -1,94 +1,93 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import RichTextEditor from './RichTextEditor';
+import { authUtils, answersAPI } from '../services/api';
+import api from '../services/api';
 import './QuestionDetails.css';
 
-const mockQuestion = {
-  id: '1',
-  title: 'How does JWT authentication work in React?',
-  description: `JWT (JSON Web Tokens) is a way to securely transmit information between parties as a JSON object...`,
-  tags: ['react', 'jwt', 'auth'],
-  author: 'alice',
-  createdAt: '2025-07-11T12:00:00Z',
-};
+interface Answer {
+  id: string;
+  content: string;
+  author: string;
+  createdAt: string;
+  voteCount: number;
+  isAccepted: boolean;
+  comments: Array<{
+    id: string;
+    author: string;
+    content: string;
+    createdAt: string;
+  }>;
+}
 
-const mockAnswers = [
-  {
-    id: 'a1',
-    content: 'You can use `localStorage` to store the token after login...',
-    author: 'bob',
-    createdAt: '2025-07-12T10:00:00Z',
-    voteCount: 5,
-    isAccepted: true,
-    comments: [
-      { id: 'c1', author: 'alice', content: 'Great answer!', createdAt: '2025-07-12T12:00:00Z' },
-      { id: 'c2', author: 'carol', content: 'Can you elaborate on security?', createdAt: '2025-07-12T12:10:00Z' },
-    ],
-  },
-  {
-    id: 'a2',
-    content: 'I recommend storing the JWT in an HTTP-only cookie...',
-    author: 'carol',
-    createdAt: '2025-07-12T11:30:00Z',
-    voteCount: 3,
-    isAccepted: false,
-    comments: [
-      { id: 'c3', author: 'bob', content: 'This is more secure!', createdAt: '2025-07-12T12:20:00Z' },
-    ],
-  },
-];
+interface Question {
+  id: string;
+  title: string;
+  description: string;
+  tags: string[];
+  author: string;
+  createdAt: string;
+  answers: Answer[];
+}
+
 
 
 const QuestionDetails: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  // In real app, fetch question/answers by id
-  const question = mockQuestion; // would filter by id
-  const [answers, setAnswers] = useState(mockAnswers);
+  const [question, setQuestion] = useState<Question | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [commentInputs, setCommentInputs] = useState<{ [answerId: string]: string }>({});
   const [answerContent, setAnswerContent] = useState('');
+  const isLoggedIn = authUtils.isLoggedIn();
+
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const res = await api.get(`/questions/answers?questionId=${id}`);
+        setQuestion(res.data);
+      } catch (err: any) {
+        setError('Failed to load question.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchQuestion();
+  }, [id]);
 
   const handleCommentChange = (answerId: string, value: string) => {
     setCommentInputs((prev) => ({ ...prev, [answerId]: value }));
   };
 
+  // Placeholder for add comment logic
   const handleAddComment = (answerId: string) => {
-    const text = commentInputs[answerId]?.trim();
-    if (!text) return;
-    setAnswers((prev) => prev.map(ans =>
-      ans.id === answerId
-        ? {
-            ...ans,
-            comments: [
-              ...(ans.comments || []),
-              {
-                id: 'c' + Math.random().toString(36).slice(2),
-                author: 'You',
-                content: text,
-                createdAt: new Date().toISOString(),
-              },
-            ],
-          }
-        : ans
-    ));
+    // TODO: Integrate comment API
     setCommentInputs((prev) => ({ ...prev, [answerId]: '' }));
   };
 
+  const [posting, setPosting] = useState(false);
+  const [postError, setPostError] = useState('');
+
+  if (loading) return <div className="question-details-container"><p>Loading...</p></div>;
+  if (error || !question) return <div className="question-details-container"><p>{error || 'Question not found.'}</p></div>;
+
   return (
-    <div className="question-details-container">
-      <div className="question-back" onClick={() => navigate('/')}
-        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: 24 }}
-      >
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M15.5 19L8.5 12L15.5 5" stroke="#667eea" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-        <span style={{ color: '#e2e8f0', fontWeight: 600, fontSize: '1.1rem', marginLeft: 8 }}>Home</span>
+    <div className="question-details-container dark">
+      {/* Breadcrumbs */}
+      <div className="breadcrumbs">
+        <span className="breadcrumb-link" onClick={() => navigate('/')}>Home</span>
+        <span className="breadcrumb-sep">/</span>
+        <span className="breadcrumb-current">Question</span>
       </div>
+
       <h1 className="question-title">{question.title}</h1>
       <div className="question-meta">
         Posted by {question.author} • {new Date(question.createdAt).toLocaleString()}
       </div>
-      <div className="question-description">{question.description}</div>
+      <div className="question-description" dangerouslySetInnerHTML={{ __html: question.description }} />
 
       <div className="question-tags">
         {question.tags.map((tag) => (
@@ -97,9 +96,10 @@ const QuestionDetails: React.FC = () => {
       </div>
 
       <h2 className="answer-section-title">Answers</h2>
-      {answers.map((ans) => (
+      {(question.answers || []).length === 0 && <div className="no-answers">No answers yet.</div>}
+      {(question.answers || []).map((ans) => (
         <div key={ans.id} className={`answer-card ${ans.isAccepted ? 'accepted' : ''}`}>
-          <div className="answer-content">{ans.content}</div>
+          <div className="answer-content" dangerouslySetInnerHTML={{ __html: ans.content }} />
           <div className="answer-meta">
             {ans.isAccepted && <strong>✔ Accepted • </strong>}
             {ans.voteCount} votes • Answered by {ans.author} on {new Date(ans.createdAt).toLocaleString()}
@@ -139,12 +139,41 @@ const QuestionDetails: React.FC = () => {
         placeholder="Write a detailed answer to help the community..."
         value={answerContent}
         onChange={setAnswerContent}
-        disabled={true}
+        disabled={!isLoggedIn || posting}
       />
-
-      <button className="submit-btn" disabled style={{ marginTop: '12px' }}>
-        Login to answer
-      </button>
+      {postError && <div style={{ color: '#f87171', marginTop: 8 }}>{postError}</div>}
+      {!isLoggedIn && (
+        <button className="submit-btn" disabled style={{ marginTop: '12px' }}>
+          Login to answer
+        </button>
+      )}
+      {isLoggedIn && (
+        <button
+          className="submit-btn"
+          style={{ marginTop: '12px' }}
+          disabled={posting || !answerContent.trim()}
+          onClick={async () => {
+            setPosting(true);
+            setPostError('');
+            try {
+              await answersAPI.postAnswer({
+                description: answerContent,
+                questionId: question.id,
+              });
+              setAnswerContent('');
+              // Refresh question/answers
+              const res = await api.get(`/questions/answers?questionId=${question.id}`);
+              setQuestion(res.data);
+            } catch (err: any) {
+              setPostError('Failed to post answer.');
+            } finally {
+              setPosting(false);
+            }
+          }}
+        >
+          {posting ? 'Posting...' : 'Post Answer'}
+        </button>
+      )}
     </div>
   );
 };
